@@ -8,80 +8,147 @@
 </head>
 
 <body>
-    <header>
-        <h1>Sales Invoice</h1>
-        <address contenteditable>
-            <p>Alamin Gem Amin</p>
-            <p>Khilkhet, Dhaka<br>alamingemamin@gmail.com</p>
-            <p>(088) 01759216367</p>
-        </address>
-        <span>
-            <img alt="itgeliyor" src="logo.webp" />
-            <input type="file" accept="image/*" />
-        </span>
-    </header>
-    <article>
-        <h1>Recipient</h1>
-        <address contenteditable>
-            <br>Itgeliyor Immediately </br>
-                Invoice Generator</p>
-        </address>
-        <table class="meta">
-            <tr>
-                <th><span contenteditable>Invoice #</span></th>
-                <td><span contenteditable>101138</span></td>
-            </tr>
-            <tr>
-                <th><span contenteditable>Date</span></th>
-                <td><span contenteditable>January 1, 2025</span></td>
-            </tr>
-            <tr>
-                <th><span contenteditable>Amount Due</span></th>
-                <td><span id="prefix" contenteditable>$</span><span>600.00</span></td>
-            </tr>
-        </table>
-        <table class="inventory">
-            <thead>
+    <form id="invoice-form" method="POST" action="/invoices">
+        <header>
+            <h1>Sales Invoice</h1>
+            <address contenteditable>
+                <p>Alamin Gem Amin</p>
+                <p>Khilkhet, Dhaka<br>alamingemamin@gmail.com</p>
+                <p>(088) 01759216367</p>
+            </address>
+            <span>
+                <img alt="itgeliyor" src="logo.webp" />
+                <input type="file" accept="image/*" />
+            </span>
+        </header>
+        <article>
+            <h1>Recipient</h1>
+            <address contenteditable>
+                <p>Itgeliyor Immediately </p>
+                <p>Invoice Generator</p>
+            </address>
+            <table class="meta">
                 <tr>
-                    <th><span contenteditable>Item</span></th>
-                    <th><span contenteditable>Description</span></th>
-                    <th><span contenteditable>Rate</span></th>
-                    <th><span contenteditable>Quantity</span></th>
-                    <th><span contenteditable>Price</span></th>
+                    <th><span contenteditable>Invoice #</span></th>
+                    <td><span contenteditable>101138</span></td>
                 </tr>
-            </thead>
-            <tbody>
                 <tr>
-                    <td><a class="cut">-</a><span contenteditable>Hot Water Tank</span></td>
-                    <td><span contenteditable>Hot water tank 3-292-212</span></td>
-                    <td><span data-prefix>$</span><span contenteditable>150.00</span></td>
-                    <td><span contenteditable>4</span></td>
+                    <th><span contenteditable>Date</span></th>
+                    <td><span contenteditable>January 1, 2025</span></td>
+                </tr>
+                <tr>
+                    <th><span contenteditable>Amount Due</span></th>
+                    <td><span id="prefix" contenteditable>$</span><span>600.00</span></td>
+                </tr>
+            </table>
+            <table class="inventory">
+                <thead>
+                    <tr>
+                        <th><span contenteditable>Item</span></th>
+                        <th><span contenteditable>Description</span></th>
+                        <th><span contenteditable>Rate</span></th>
+                        <th><span contenteditable>Quantity</span></th>
+                        <th><span contenteditable>Price</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a class="cut">-</a><span contenteditable>Hot Water Tank</span></td>
+                        <td><span contenteditable>Hot water tank 3-292-212</span></td>
+                        <td><span data-prefix>$</span><span contenteditable>150.00</span></td>
+                        <td><span contenteditable>4</span></td>
+                        <td><span data-prefix>$</span><span>600.00</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <a class="add">+</a>
+            <table class="balance">
+                <tr>
+                    <th><span contenteditable>Total</span></th>
                     <td><span data-prefix>$</span><span>600.00</span></td>
                 </tr>
-            </tbody>
-        </table>
-        <a class="add">+</a>
-        <table class="balance">
-            <tr>
-                <th><span contenteditable>Total</span></th>
-                <td><span data-prefix>$</span><span>600.00</span></td>
-            </tr>
-            <tr>
-                <th><span contenteditable>Amount Paid</span></th>
-                <td><span data-prefix>$</span><span contenteditable>0.00</span></td>
-            </tr>
-            <tr>
-                <th><span contenteditable>Amount Due</span></th>
-                <td><span data-prefix>$</span><span>600.00</span></td>
-            </tr>
-        </table>
-    </article>
-    <aside>
-        <h1><span contenteditable>Additional Notes</span></h1>
-        <div contenteditable>
-            <p>Thank you for join with us</p>
-        </div>
-    </aside>
+                <tr>
+                    <th><span contenteditable>Amount Paid</span></th>
+                    <td><span data-prefix>$</span><span contenteditable>0.00</span></td>
+                </tr>
+                <tr>
+                    <th><span contenteditable>Amount Due</span></th>
+                    <td><span data-prefix>$</span><span>600.00</span></td>
+                </tr>
+            </table>
+        </article>
+        <aside>
+            <h1><span contenteditable>Additional Notes</span></h1>
+            <div contenteditable>
+                <p>Thank you for joining us</p>
+            </div>
+        </aside>
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        <button type="submit">Submit Invoice</button>
+    </form>
+
+    <script>
+        function gatherInvoiceData() {
+            var form = document.getElementById('invoice-form');
+
+            // Create hidden input fields for each contenteditable element
+            var contentEditableElements = form.querySelectorAll('[contenteditable]');
+            contentEditableElements.forEach(function (element, index) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'invoice_data[' + index + ']';
+                input.value = element.innerHTML;
+                form.appendChild(input);
+            });
+        }
+
+        document.getElementById('invoice-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Remove any existing hidden input fields to avoid duplication
+            var existingInputs = document.querySelectorAll('input[type="hidden"]');
+            existingInputs.forEach(function (input) {
+                input.remove();
+            });
+
+            // Gather data from contenteditable elements
+            var contentEditableElements = document.querySelectorAll('[contenteditable]');
+            contentEditableElements.forEach(function (element, index) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'invoice_data[' + index + ']';
+                input.value = element.innerHTML;
+                document.getElementById('invoice-form').appendChild(input);
+            });
+
+            // Log formData to console for debugging
+            var formData = new FormData(this);
+            console.log(formData)
+            formData.forEach((value, key) => {
+                // console.log(key, value);
+
+            });
+
+            console.log(formData.getAll)
+            return 0;
+
+            // Submit the form data via AJAX
+            fetch('/invoices', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    alert('Invoice saved successfully');
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+    </script>
 </body>
 
 </html>
